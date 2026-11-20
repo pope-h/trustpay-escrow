@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { CryptoId } from '@/components/ui/CryptoId';
+import { EmbeddedDemoSandbox } from './EmbeddedDemoSandbox';
 
 export interface ApplicantCardData {
   id: string;
@@ -13,6 +14,8 @@ export interface ApplicantCardData {
   pitch?: string;
   cover_note?: string;
   portfolio_url?: string;
+  demo_url?: string;
+  demoUrl?: string;
   status?: 'pending' | 'accepted' | 'denied' | 'granted' | 'rejected';
   created_at?: string;
   granted?: boolean;
@@ -33,6 +36,7 @@ export function ApplicantCard({ applicant, onAccept, onDeny, onOpenChat, isProce
   const walletAddr = applicant.stellar_address || applicant.freelancer_address || applicant.name || 'GAUBK...NLSGV';
   const coverText = applicant.cover_note || applicant.pitch || 'No cover note provided.';
   const portfolioUrl = applicant.portfolio_url;
+  const demoUrl = applicant.demo_url || applicant.demoUrl;
   const currentStatus = applicant.status || (applicant.granted ? 'accepted' : 'pending');
 
   const handleCopyWallet = () => {
@@ -135,6 +139,16 @@ export function ApplicantCard({ applicant, onAccept, onDeny, onOpenChat, isProce
             <span className="truncate">{portfolioUrl}</span>
             <span>↗</span>
           </a>
+        </div>
+      )}
+
+      {/* Live Demo Sandbox Section */}
+      {demoUrl && (
+        <div className="space-y-1.5 pt-1">
+          <h4 className="text-[11px] font-semibold text-[#71717a] uppercase tracking-wider">
+            Live Code Demo
+          </h4>
+          <EmbeddedDemoSandbox url={demoUrl} title="Freelancer live demo" />
         </div>
       )}
 
