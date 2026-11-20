@@ -10,6 +10,8 @@ import { ImageLightboxModal } from '@/components/ImageLightboxModal';
 import { ProjectDetailSkeleton } from '@/components/skeletons';
 import { ProjectAuditLog } from '@/components/ProjectAuditLog';
 import { CalendarExportButton } from '@/components/CalendarExportButton';
+import { ContractSecurityModal } from '@/components/ContractSecurityModal';
+import { MutualCancellationModal } from '@/components/MutualCancellationModal';
 import { useWalletStore } from '@/store/walletStore';
 import { authFetch } from '@/lib/api';
 import { CryptoId } from '@/components/ui/CryptoId';
@@ -72,6 +74,9 @@ export default function ProjectDetailsPage() {
 
   const [showFundEscrowModal, setShowFundEscrowModal] = useState(false);
   const [fundFreelancerAddress, setFundFreelancerAddress] = useState('');
+
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showMutualCancelModal, setShowMutualCancelModal] = useState(false);
 
   const computeDeliverableHash = async (input: string): Promise<string> => {
     const trimmed = input.trim();
@@ -677,6 +682,26 @@ export default function ProjectDetailsPage() {
             </span>
 
             <CalendarExportButton project={project} />
+
+            <button
+              onClick={() => setShowSecurityModal(true)}
+              className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700 hover:bg-slate-700/80 hover:text-white transition-all flex items-center gap-1.5"
+              title="Inspect deployed contract WASM hash & security checklist"
+            >
+              <span>🔒</span>
+              <span>Contract Security</span>
+            </button>
+
+            {(isClient || isFreelancer) && project.status === 'in_progress' && (
+              <button
+                onClick={() => setShowMutualCancelModal(true)}
+                className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition-all flex items-center gap-1.5"
+                title="Negotiate a mutual refund split without arbitration"
+              >
+                <span>🤝</span>
+                <span>Mutual Cancellation</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -1483,6 +1508,21 @@ export default function ProjectDetailsPage() {
           onClose={() => setLightboxImage(null)}
         />
       )}
+
+      {/* Contract Transparency & Security Inspector */}
+      <ContractSecurityModal
+        isOpen={showSecurityModal}
+        onClose={() => setShowSecurityModal(false)}
+        contractId={project.contract_id || DEFAULT_ESCROW_CONTRACT_ID}
+      />
+
+      {/* Mutual Cancellation & Refund Split Negotiation */}
+      <MutualCancellationModal
+        isOpen={showMutualCancelModal}
+        onClose={() => setShowMutualCancelModal(false)}
+        project={project}
+        onUpdated={fetchProject}
+      />
     </div>
   );
 }
