@@ -65,6 +65,7 @@ export interface Applicant {
   status?: 'pending' | 'accepted' | 'denied' | 'granted' | 'rejected';
   granted?: boolean;
   created_at?: string;
+  zk_attestation?: unknown;
 }
 
 export interface Proposal {
@@ -134,4 +135,16 @@ export interface ProjectReview {
   average_rating: number;
   testimonial: string;
   created_at: string;
+}
+
+/** A freelancer the client has starred, with private notes (#255). */
+export interface StarredFreelancer {
+  /** Stellar address, the stable identifier. */
+  address: string;
+  name?: string;
+  /** Private to the client; never sent to the freelancer. */
+  notes: string;
+  starredAt: string;
+  /** Project the freelancer applied to or worked on, for context. */
+  lastProjectTitle?: string;
 }
